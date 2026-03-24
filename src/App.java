@@ -36,23 +36,38 @@ public class App {
         return vetor;
     }
 
+    private static void imprimirResultado(String nome, IOrdenador<Integer> ordenador) {
+        System.out.println(nome + ":");
+        System.out.println("Comparações: " + ordenador.getComparacoes());
+        System.out.println("Movimentações: " + ordenador.getMovimentacoes());
+        System.out.println("Tempo de ordenação (ms): " + ordenador.getTempoOrdenacao());
+    }
+
 
     public static void main(String[] args) {
-        int tam = 20;
-        Integer[] vetor = gerarVetorObjetos(tam);
+        int[] tamanhosParaTeste = { 10, 20, 50, 100, 200, 500, 1000, 2000 };
 
-        BubbleSort<Integer> bolha = new BubbleSort<>();
+        for (int tam : tamanhosParaTeste) {
+            Integer[] vetorBase = gerarVetorObjetos(tam);
 
-        Integer[] vetorOrdenadoBolha = bolha.ordenar(vetor);
+            BubbleSort<Integer> bolha = new BubbleSort<>();
+            InsertionSort<Integer> insercao = new InsertionSort<>();
+            SelectionSort<Integer> selecao = new SelectionSort<>();
 
-        System.out.println("\nVetor ordenado método Bolha:");
-        System.out.println("Comparações: " + bolha.getComparacoes());
-        System.out.println("Movimentações: " + bolha.getMovimentacoes());
-        System.out.println("Tempo de ordenação (ms): " + bolha.getTempoOrdenacao());
+            Integer[] vetorOrdenadoBolha = bolha.ordenar(vetorBase);
+            Integer[] vetorOrdenadoInsercao = insercao.ordenar(vetorBase);
+            Integer[] vetorOrdenadoSelecao = selecao.ordenar(vetorBase);
 
-        /* TO DO
-        *Fazer a implementacao do restante do main para a ordenacao 
-        *  com os algoritmos InsertionSort e SelectionSort
-        */
+            if (!Arrays.equals(vetorOrdenadoBolha, vetorOrdenadoInsercao)
+                    || !Arrays.equals(vetorOrdenadoBolha, vetorOrdenadoSelecao)) {
+                throw new IllegalStateException("Resultados diferentes entre algoritmos para tamanho=" + tam);
+            }
+
+            System.out.println("\n============================");
+            System.out.println("Tamanho do vetor: " + tam);
+            imprimirResultado("BubbleSort", bolha);
+            imprimirResultado("InsertionSort", insercao);
+            imprimirResultado("SelectionSort", selecao);
+        }
     }
 }
