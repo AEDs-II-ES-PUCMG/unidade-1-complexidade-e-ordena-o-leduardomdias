@@ -1,5 +1,6 @@
 import java.util.Arrays;
 import java.util.Random;
+import java.util.Scanner;
 
 public class App {
     static final int[] tamanhosTesteGrande =  { 31_250_000, 62_500_000, 125_000_000, 250_000_000, 500_000_000 };
@@ -43,31 +44,63 @@ public class App {
         System.out.println("Tempo de ordenação (ms): " + ordenador.getTempoOrdenacao());
     }
 
+    private static IOrdenador<Integer> escolherOrdenador(int opcao) {
+        switch (opcao) {
+            case 1: return new BubbleSort<>();
+            case 2: return new InsertionSort<>();
+            case 3: return new SelectionSort<>();
+            case 4: return new MergeSort<>();
+            default: return null;
+        }
+    }
+
+    private static String nomeOrdenador(int opcao) {
+        switch (opcao) {
+            case 1: return "BubbleSort";
+            case 2: return "InsertionSort";
+            case 3: return "SelectionSort";
+            case 4: return "MergeSort";
+            default: return "Desconhecido";
+        }
+    }
 
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
         int[] tamanhosParaTeste = { 10, 20, 50, 100, 200, 500, 1000, 2000 };
+
+        System.out.println("===== Sistema de Ordenação =====");
+        System.out.println("Escolha o método de ordenação:");
+        System.out.println("1 - BubbleSort");
+        System.out.println("2 - InsertionSort");
+        System.out.println("3 - SelectionSort");
+        System.out.println("4 - MergeSort");
+        System.out.println("5 - Todos os métodos");
+        System.out.print("Opção: ");
+
+        int opcao = scanner.nextInt();
+        scanner.close();
+
+        if (opcao < 1 || opcao > 5) {
+            System.out.println("Opção inválida.");
+            return;
+        }
 
         for (int tam : tamanhosParaTeste) {
             Integer[] vetorBase = gerarVetorObjetos(tam);
-
-            BubbleSort<Integer> bolha = new BubbleSort<>();
-            InsertionSort<Integer> insercao = new InsertionSort<>();
-            SelectionSort<Integer> selecao = new SelectionSort<>();
-
-            Integer[] vetorOrdenadoBolha = bolha.ordenar(vetorBase);
-            Integer[] vetorOrdenadoInsercao = insercao.ordenar(vetorBase);
-            Integer[] vetorOrdenadoSelecao = selecao.ordenar(vetorBase);
-
-            if (!Arrays.equals(vetorOrdenadoBolha, vetorOrdenadoInsercao)
-                    || !Arrays.equals(vetorOrdenadoBolha, vetorOrdenadoSelecao)) {
-                throw new IllegalStateException("Resultados diferentes entre algoritmos para tamanho=" + tam);
-            }
-
             System.out.println("\n============================");
             System.out.println("Tamanho do vetor: " + tam);
-            imprimirResultado("BubbleSort", bolha);
-            imprimirResultado("InsertionSort", insercao);
-            imprimirResultado("SelectionSort", selecao);
+
+            if (opcao == 5) {
+                for (int i = 1; i <= 4; i++) {
+                    IOrdenador<Integer> ordenador = escolherOrdenador(i);
+                    ordenador.ordenar(vetorBase);
+                    imprimirResultado(nomeOrdenador(i), ordenador);
+                }
+            } else {
+                IOrdenador<Integer> ordenador = escolherOrdenador(opcao);
+                ordenador.ordenar(vetorBase);
+                imprimirResultado(nomeOrdenador(opcao), ordenador);
+            }
         }
     }
 }
